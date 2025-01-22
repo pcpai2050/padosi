@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  PadosiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: app.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HomeKitchens
+      Environment:
+        Variables:
+          PADOSI_TABLE_NAME: !Ref HomeKitchens
+      Events:
+        PadosiApi:
+          Type: Api
+          Properties:
+            Path: /home-kitchens
+            Method: post
+
+  HomeKitchens:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: HomeKitchens
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  PadosiApiUrl:
+    Description: "URL for the Padosi API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/padosi"

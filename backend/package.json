@@ -1,0 +1,20 @@
+{
+  "name": "padosi",
+  "version": "1.0.0",
+  "description": "Padosi app for buying and selling products and services within a gated community",
+  "main": "app.js",
+  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "axios": ">=1.6.0",
+    "aws-sdk": "^2.1048.0"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.2.0"
+  }
+}

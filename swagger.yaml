@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  title: Padosi API
+  description: API documentation for Padosi, a platform for neighbors to buy and sell homemade food within their apartment complex.
+  version: 1.0.0
+  contact:
+    name: Padosi Support
+    url: https://heypadosi.com
+    email: support@heypadosi.com
+servers:
+  - url: https://api.heypadosi.com/v1
+    description: Production server
+  - url: https://api.dev.heypadosi.com/v1
+    description: Development server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login user with mobile number and OTP
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobileNumber:
+                  type: string
+                  example: "9876543210"
+                otp:
+                  type: string
+                  example: "123456"
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  authToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+        401:
+          description: Invalid OTP
+
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  example: "johndoe@example.com"
+                mobileNumber:
+                  type: string
+                  example: "9876543210"
+                apartmentName:
+                  type: string
+                  example: "Palm Heights"
+                flatNumber:
+                  type: string
+                  example: "A-203"
+      responses:
+        201:
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registration successful"
+                  authToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+        400:
+          description: Invalid input data
+
+  /home-kitchens:
+    get:
+      summary: Get list of home kitchens in the user's apartment
+      tags:
+        - Home Kitchens
+      parameters:
+        - name: apartmentName
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "Palm Heights"
+      responses:
+        200:
+          description: List of home kitchens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    kitchenId:
+                      type: string
+                      example: "kitchen123"
+                    name:
+                      type: string
+                      example: "Tasty Treats"
+                    rating:
+                      type: number
+                      example: 4.5
+                    cuisine:
+                      type: string
+                      example: "Indian, Chinese"
+                    dishesAvailable:
+                      type: integer
+                      example: 10
+
+  /home-kitchens/{kitchenId}/dishes:
+    get:
+      summary: Get list of dishes from a specific home kitchen
+      tags:
+        - Dishes
+      parameters:
+        - name: kitchenId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "kitchen123"
+      responses:
+        200:
+          description: List of dishes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dishId:
+                      type: string
+                      example: "dish456"
+                    name:
+                      type: string
+                      example: "Butter Chicken"
+                    price:
+                      type: number
+                      example: 250
+                    rating:
+                      type: number
+                      example: 4.7
+                    readyTime:
+                      type: string
+                      example: "15:30"
+                    imageUrl:
+                      type: string
+                      example: "https://heypadosi.com/images/butter-chicken.jpg"
+
+  /orders:
+    post:
+      summary: Place an order
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dishId:
+                  type: string
+                  example: "dish456"
+                quantity:
+                  type: integer
+                  example: 2
+                deliveryType:
+                  type: string
+                  enum: [Self Pickup, Delivery]
+                  example: "Delivery"
+      responses:
+        201:
+          description: Order placed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: string
+                    example: "order789"
+                  message:
+                    type: string
+                    example: "Order placed successfully"
+
+  /orders/{orderId}:
+    get:
+      summary: Get order status
+      tags:
+        - Orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "order789"
+      responses:
+        200:
+          description: Order status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: string
+                    example: "order789"
+                  status:
+                    type: string
+                    example: "Food is being prepared"
+                  estimatedReadyTime:
+                    type: string
+                    example: "15:30"
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid request"
