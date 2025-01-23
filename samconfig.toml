@@ -3,7 +3,7 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "padosi_app"
+stack_name = "padosi-app"
 
 [default.build.parameters]
 cached = true
@@ -16,7 +16,6 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-stack_name = "padosi-app"
 s3_prefix = "padosi-app"
 region = "ap-south-1"
 disable_rollback = true

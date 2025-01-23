@@ -52,9 +52,9 @@ paths:
   /auth/register:
     post:
       summary: Register a new user
-      tags:
-        - Authentication
+      operationId: registerUser
       requestBody:
+        description: User registration details
         required: true
         content:
           application/json:
@@ -63,35 +63,24 @@ paths:
               properties:
                 name:
                   type: string
-                  example: "John Doe"
                 email:
                   type: string
-                  example: "johndoe@example.com"
-                mobileNumber:
+                phone:
                   type: string
-                  example: "9876543210"
-                apartmentName:
+                apartment:
                   type: string
-                  example: "Palm Heights"
-                flatNumber:
+                flat_number:
                   type: string
-                  example: "A-203"
+                role:
+                  type: string
+                  enum: [buyer, seller]
+                profile_picture_url:
+                  type: string
       responses:
-        201:
-          description: Registration successful
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Registration successful"
-                  authToken:
-                    type: string
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-        400:
-          description: Invalid input data
+        '201':
+          description: User registered successfully
+        '500':
+          description: Could not register user
 
   /home-kitchens:
     get:
@@ -130,6 +119,37 @@ paths:
                     dishesAvailable:
                       type: integer
                       example: 10
+
+    post:
+      summary: Register a new home kitchen
+      operationId: registerHomeKitchen
+      requestBody:
+        description: Home kitchen registration details
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                seller_id:
+                  type: string
+                apartment:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                rating:
+                  type: number
+                number_of_ratings:
+                  type: integer
+                location:
+                  type: string
+      responses:
+        '201':
+          description: Home kitchen registered successfully
+        '500':
+          description: Could not register home kitchen
 
   /home-kitchens/{kitchenId}/dishes:
     get:

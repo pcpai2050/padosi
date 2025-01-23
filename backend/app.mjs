@@ -14,9 +14,10 @@ import AWS from 'aws-sdk';
  */
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const tableName = process.env.PADOSI_TABLE_NAME || 'HomeKitchens';
+const tableName = process.env.PADOSI_TABLE_NAME || 'PadosiTable';
 
 export const lambdaHandler = async (event, context) => {
+    console.log("PCP in lambdaHandler for app");
     // Retrieve the item from the DynamoDB table
     const getParams = {
         TableName: tableName,

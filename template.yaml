@@ -13,26 +13,101 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
+            TableName: !Ref PadosiTable
+      Environment:
+        Variables:
+          PADOSI_TABLE_NAME: !Ref PadosiTable
+
+  RegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: register.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Users
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref Users
+      Events:
+        RegisterApi:
+          Type: Api
+          Properties:
+            Path: /auth/register
+            Method: post
+
+  HomeKitchensFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: homeKitchens.lambdaHandler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
             TableName: !Ref HomeKitchens
       Environment:
         Variables:
-          PADOSI_TABLE_NAME: !Ref HomeKitchens
+          HOME_KITCHENS_TABLE_NAME: !Ref HomeKitchens
       Events:
-        PadosiApi:
+        HomeKitchensApi:
           Type: Api
           Properties:
             Path: /home-kitchens
             Method: post
 
+  PadosiTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PadosiTable
+      AttributeDefinitions:
+        - AttributeName: _id
+          AttributeType: S
+        - AttributeName: seller_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: _id
+          KeyType: HASH
+        - AttributeName: seller_id
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  
   HomeKitchens:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: HomeKitchens
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: _id
+          AttributeType: S
+        - AttributeName: seller_id
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: _id
+          KeyType: HASH
+        - AttributeName: seller_id
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  Users:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Users
+      AttributeDefinitions:
+        - AttributeName: _id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: _id
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 5
@@ -42,3 +117,9 @@ Outputs:
   PadosiApiUrl:
     Description: "URL for the Padosi API"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/padosi"
+  RegisterApiUrl:
+    Description: "URL for the Register API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/auth/register"
+  HomeKitchensApiUrl:
+    Description: "URL for the Home Kitchens API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/home-kitchens"
