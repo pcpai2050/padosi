@@ -151,6 +151,40 @@ paths:
         '500':
           description: Could not register home kitchen
 
+    get:
+      summary: Get all home kitchens
+      operationId: getHomeKitchens
+      responses:
+        '200':
+          description: Home kitchens retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    seller_id:
+                      type: string
+                    apartment:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    rating:
+                      type: number
+                    number_of_ratings:
+                      type: integer
+                    location:
+                      type: string
+                    created_on:
+                      type: string
+        '500':
+          description: Could not retrieve home kitchens
+
   /home-kitchens/{kitchenId}/dishes:
     get:
       summary: Get list of dishes from a specific home kitchen

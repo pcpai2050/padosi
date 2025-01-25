@@ -56,11 +56,16 @@ Resources:
         Variables:
           HOME_KITCHENS_TABLE_NAME: !Ref HomeKitchens
       Events:
-        HomeKitchensApi:
+        HomeKitchensApiPost:
           Type: Api
           Properties:
             Path: /home-kitchens
             Method: post
+        HomeKitchensApiGet:
+          Type: Api
+          Properties:
+            Path: /home-kitchens
+            Method: get
 
   PadosiTable:
     Type: AWS::DynamoDB::Table
@@ -69,18 +74,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: _id
           AttributeType: S
-        - AttributeName: seller_id
-          AttributeType: S
       KeySchema:
         - AttributeName: _id
           KeyType: HASH
-        - AttributeName: seller_id
-          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  
   HomeKitchens:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -113,6 +113,25 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: padosi-frontend-bucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+  FrontendDeployment:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub "arn:aws:s3:::padosi-frontend-bucket/*"
+
 Outputs:
   PadosiApiUrl:
     Description: "URL for the Padosi API"
@@ -123,3 +142,6 @@ Outputs:
   HomeKitchensApiUrl:
     Description: "URL for the Home Kitchens API"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/home-kitchens"
+  FrontendBucketUrl:
+    Description: "URL for the Frontend S3 Bucket"
+    Value: !Sub "http://${FrontendBucket}.s3-website-${AWS::Region}.amazonaws.com"

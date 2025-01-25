@@ -5,7 +5,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.HOME_KITCHENS_TABLE_NAME || 'HomeKitchens';
 
 export const lambdaHandler = async (event, context) => {
-    console.log('PCP Received event:', JSON.stringify(event, null, 2));
+    console.log('Received event:', JSON.stringify(event, null, 2));
     const requestBody = JSON.parse(event.body);
     const kitchenId = uuidv4();
 
